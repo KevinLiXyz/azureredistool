@@ -1,0 +1,130 @@
+@echo off
+REM Azure Redis Manager 打包脚本
+REM 生成可独立运行的exe文件
+
+echo ========================================
+echo Azure Redis Manager 打包工具
+echo ========================================
+echo.
+
+REM 检查是否存在主程序文件
+if not exist "azure_redis_manager.py" (
+    echo 错误: 找不到 azure_redis_manager.py 文件
+    echo 请确保在正确的目录中运行此脚本
+    pause
+    exit /b 1
+)
+
+echo 正在检查Python环境...
+python --version
+if errorlevel 1 (
+    echo 错误: 未找到Python环境
+    echo 请确保已正确安装Python
+    pause
+    exit /b 1
+)
+
+echo.
+echo 正在检查依赖包...
+python -c "import redis, tkinter; print('依赖检查通过')"
+if errorlevel 1 (
+    echo 错误: 缺少必要的依赖包
+    echo 正在尝试安装...
+    pip install redis==4.5.4
+    if errorlevel 1 (
+        echo 依赖安装失败，请手动安装
+        pause
+        exit /b 1
+    )
+)
+
+echo.
+echo 正在检查PyInstaller...
+python -c "import PyInstaller; print('PyInstaller已就绪')"
+if errorlevel 1 (
+    echo 正在安装PyInstaller...
+    pip install pyinstaller
+    if errorlevel 1 (
+        echo PyInstaller安装失败
+        pause
+        exit /b 1
+    )
+)
+
+echo.
+echo 开始打包程序...
+echo 这可能需要几分钟时间，请耐心等待...
+echo.
+
+REM 清理之前的构建文件
+if exist "dist" rmdir /s /q "dist"
+if exist "build" rmdir /s /q "build"
+if exist "*.spec" del "*.spec"
+
+REM 使用PyInstaller打包
+pyinstaller ^
+    --onefile ^
+    --windowed ^
+    --name "AzureRedisManager" ^
+    --distpath "dist" ^
+    --workpath "build" ^
+    --specpath "." ^
+    --hidden-import tkinter ^
+    --hidden-import tkinter.ttk ^
+    --hidden-import redis ^
+    --hidden-import threading ^
+    --hidden-import queue ^
+    --hidden-import socket ^
+    --hidden-import ssl ^
+    --hidden-import datetime ^
+    --hidden-import time ^
+    --hidden-import json ^
+    --exclude-module matplotlib ^
+    --exclude-module numpy ^
+    --exclude-module pandas ^
+    --exclude-module scipy ^
+    --clean ^
+    azure_redis_manager.py
+
+if errorlevel 1 (
+    echo.
+    echo 打包失败!
+    echo 请检查错误信息并重试
+    pause
+    exit /b 1
+)
+
+echo.
+echo ========================================
+echo 打包完成!
+echo ========================================
+echo.
+echo 可执行文件位置: dist\AzureRedisManager.exe
+echo 文件大小约: 20-30MB
+echo.
+
+if exist "dist\AzureRedisManager.exe" (
+    echo 验证可执行文件...
+    dir "dist\AzureRedisManager.exe"
+    echo.
+    echo 🎉 打包成功!
+    echo.
+    echo 使用方法:
+    echo 1. 将 dist\AzureRedisManager.exe 复制到目标电脑
+    echo 2. 双击运行即可，无需安装任何依赖
+    echo 3. 输入Azure Redis连接信息开始使用
+    echo.
+    echo 是否现在测试运行? (Y/N)
+    set /p choice=
+    if /i "%choice%"=="Y" (
+        echo 启动程序进行测试...
+        start "" "dist\AzureRedisManager.exe"
+    )
+) else (
+    echo 错误: 可执行文件未生成
+    echo 请检查打包过程中的错误信息
+)
+
+echo.
+echo 按任意键退出...
+pause > nul

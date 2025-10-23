@@ -1,0 +1,56 @@
+@echo off
+REM Azure Redis Manager 启动脚本
+REM 用于测试打包的exe文件
+
+echo =======================================
+echo    Azure Redis Manager 测试启动
+echo =======================================
+echo.
+
+REM 检查exe文件是否存在
+if not exist "dist\AzureRedisManager.exe" (
+    echo 错误: 找不到 dist\AzureRedisManager.exe
+    echo 请先运行 build.py 或 build.bat 进行打包
+    echo.
+    pause
+    exit /b 1
+)
+
+REM 显示文件信息
+echo 程序文件: dist\AzureRedisManager.exe
+for %%A in ("dist\AzureRedisManager.exe") do (
+    set size=%%~zA
+    set /a sizeMB=!size!/1024/1024
+    echo 文件大小: !sizeMB! MB
+)
+echo.
+
+echo 正在启动 Azure Redis Manager...
+echo 首次启动可能需要3-5秒钟
+echo.
+
+REM 启动程序
+start "" "dist\AzureRedisManager.exe"
+
+if errorlevel 1 (
+    echo 启动失败!
+    echo 请检查:
+    echo 1. Windows版本兼容性 (需要Windows 7+)
+    echo 2. 安全软件是否阻止
+    echo 3. 文件是否完整
+    echo.
+    pause
+    exit /b 1
+)
+
+echo ✅ 程序已启动!
+echo.
+echo 使用说明:
+echo 1. 在程序中输入Azure Redis连接信息
+echo 2. 主机: your-redis.redis.cache.windows.net
+echo 3. 端口: 6380 (SSL) 或 6379 (非SSL)
+echo 4. 密码: 您的Azure Redis访问密钥
+echo 5. 建议启用SSL连接
+echo.
+echo 按任意键关闭此窗口...
+pause > nul
