@@ -1,0 +1,20 @@
+# Azure Redis 连接配置示例
+# 请根据您的实际环境修改这些值
+
+# Azure Redis 服务信息
+REDIS_HOST=your-cache-name.redis.cache.windows.net
+REDIS_PORT=6380
+REDIS_PASSWORD=your-access-key-here
+REDIS_SSL=True
+
+# 连接示例：
+# 1. 登录Azure门户
+# 2. 找到您的Redis服务
+# 3. 复制主机名（通常格式为 xxx.redis.cache.windows.net）
+# 4. 复制访问密钥（主密钥或辅助密钥）
+# 5. 对于Azure Redis，通常使用端口6380和SSL连接
+
+# 安全提示：
+# - 不要将真实的密钥提交到版本控制系统
+# - 在生产环境中使用适当的权限管理
+# - 定期轮换访问密钥

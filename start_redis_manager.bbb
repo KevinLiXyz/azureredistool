@@ -1,0 +1,5 @@
+@echo off
+cd /d "%~dp0"
+echo Starting Azure Redis Manager...
+python azure_redis_manager.py
+pause
